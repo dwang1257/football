@@ -121,15 +121,52 @@ Two tracks are kept separate so we always know whether we add anything beyond co
 - Independent track: no market inputs.
 - Market-aware track: market spread as a feature.
 
-Progression, each step promoted only if it beats the previous one on walk-forward log loss:
+### Base model: matchup simulation
+
+The owner's starting design is the base model.
+Each team's expected stats in a game come from combining its own offensive output with the opponent's defensive allowance:
+
+| Statistic | Owner's original formula |
+|---|---|
+| Expected passing yards | [Tm passing yards for] * [Opp passing yards against] / 2 |
+| Expected rushing yards | [Tm rushing yards for] * [Opp rushing yards against] / 2 |
+| Expected takeaways | [Tm takeaways] * [Opp giveaways] / 2 |
+| Expected giveaways | [Tm giveaways] * [Opp takeaways] / 2 |
+| Statistic SD | SQRT([Tm SD]^2 * [Opp SD]^2) |
+
+As written the formulas multiply two quantities, so a team averaging 250 passing yards against a defense allowing 200 would get 25,000, and the SD formula reduces to Tm SD * Opp SD.
+The intent is clearly to blend offense and defense, so the implementation uses one of two corrected forms, and the backtest picks between them:
+
+- Average: E = (Tm for + Opp against) / 2, with SD = SQRT((Tm SD^2 + Opp SD^2) / 2).
+- League-relative (preferred): E = Tm for * Opp against / League average, which treats each side as a multiplier on the league norm, the same idea as Bill James' log5.
+
+Example with a league average of 225 passing yards: a 250-yard offense against a defense allowing 200 gives 225 with the average form and 222 with the league-relative form, because that defense is 11% better than average.
+
+### Expanding the base model
+
+1. Per-play rates instead of per-game totals, so pace does not distort the numbers: expected plays per game times expected yards per play, EPA per play, and success rate, each split into pass and rush.
+2. Opponent-adjusted inputs: a team's "for" and "against" numbers are themselves adjusted for the schedule it has faced, solved iteratively.
+3. Recency weighting with exponential decay, plus a prior from last season regressed toward the league mean for early weeks.
+4. Turnovers regressed heavily toward the league mean, because takeaway and giveaway rates are mostly noise week to week; fumble recoveries are treated as luck.
+5. Points from stats: a regression fitted on historical games maps expected passing, rushing, turnovers, red zone efficiency, and field position to expected points for each team.
+6. Simulation: draw each team's stats from normal distributions with the combined SDs, convert to points, and repeat 10,000 times; the share of simulations a team wins is its win probability.
+   The equivalent fast analytic form is margin ~ Normal(mu, sigma) and P(home win) = Phi(mu / sigma), with sigma fitted out of sample.
+7. Game context adjustments applied to the expected stats before simulating: home field, rest and bye, travel, QB injury (swap in the backup's rates), and forecast wind and cold (cut expected passing).
+8. The owner opinion layer (section 6) is applied last, to the simulated win probability.
+
+The matchup simulation is benchmarked against Elo and the market like every other model, and its outputs (expected margin, expected points, win probability) also feed the later models as features.
+
+### Progression
+
+Each step is promoted only if it beats the previous one on walk-forward log loss:
 
 | Version | Model | Notes |
 |---|---|---|
-| v0 | Baselines + Elo | Home, record, Elo, market favorite. Cheap, strong, handles cold start. |
-| v1 | Logistic regression | 5-10 standardized difference features, L2 regularized. Interpretable, well calibrated. |
-| v1b | Margin regression | Ridge on point margin, win prob = Phi(margin / sigma). Usually beats direct classification on small samples. |
-| v2 | LightGBM | Shallow trees, large min leaf size, early stopping, monotone constraint on Elo diff. |
-| v3 | Ensemble | Average of Elo, logistic, margin, GBM, then calibrated on a held-out fold. |
+| v0 | Baselines + Elo | Home, record, Elo, market favorite. Benchmarks only. |
+| v1 | Matchup simulation | The base model above: owner's formulas corrected, then expanded step by step. |
+| v2 | Logistic and margin regression | Matchup simulation outputs plus 5-10 standardized difference features, L2 regularized. Win prob = Phi(margin / sigma) for the margin version. |
+| v3 | LightGBM | Shallow trees, large min leaf size, early stopping, monotone constraint on rating diffs. |
+| v4 | Ensemble | Average of Elo, matchup simulation, regression, and GBM, then calibrated on a held-out fold. |
 
 About 6,500 games is a small dataset, so simple models are expected to stay competitive and complexity must earn its place.
 
@@ -202,7 +239,7 @@ Example: model ATL 55%, owner NYG at confidence 5, blended ATL 47.8%, pick flips
 ```
 football ingest [--sources ...] [--season 2026]
 football build-features [--seasons 2015-2026]
-football backtest --model {elo,logreg,margin,lgbm} --seasons 2012-2022
+football backtest --model {elo,matchup,logreg,margin,lgbm} --seasons 2012-2022
 football predict --season 2026 --week 7 [--final]
 football opine --week 7 [--blind]
 football score --season 2026 --week 6
@@ -224,10 +261,10 @@ football report [--season 2026 --week 7 | --backtest RUN_ID]
 | 0 | Project scaffold, tooling, CI-style `check` command, AGENTS.md filled in | `uv run` check passes |
 | 1 | Ingestion of schedules, pbp, injuries, depth charts, QBR, stadium table; line snapshotting starts | Clean tables with `available_at`, idempotency tests pass |
 | 2 | Baselines and Elo, walk-forward backtester, metrics, run log | Baseline leaderboard on 2012-2022 matches published ranges |
-| 3 | Core features and v1 logistic + v1b margin models, both tracks | Beats Elo on log loss with significance |
+| 3 | Matchup simulation base model: corrected formulas first, then each expansion step | Each expansion step improves walk-forward log loss; beats Elo |
 | 4 | Live weekly predictions, opinion layer, weekly report | First locked live week of 2026 scored |
-| 5 | Situational and owner-requested features, each tested one at a time | Each kept feature improves walk-forward log loss |
-| 6 | LightGBM and ensemble, calibration | Promoted only if it beats v1 |
+| 5 | Logistic and margin regression on simulation outputs plus situational and owner-requested features, both tracks | Each kept feature improves walk-forward log loss |
+| 6 | LightGBM and ensemble, calibration | Promoted only if it beats the best earlier model |
 | 7 | Final 2023-2025 holdout, then ongoing iteration | Holdout result reported once |
 
 Phases 1-4 aim to have live picks running within the 2026 season so the forward test and the opinion weight start accumulating data as early as possible.
