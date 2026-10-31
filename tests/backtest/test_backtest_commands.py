@@ -6,7 +6,7 @@ import typer
 from typer.testing import CliRunner
 
 from football import runlog
-from football.backtest.commands import parse_params, register
+from football.backtest.commands import parse_params, register, short_id
 
 Calls = list[tuple[str, dict[str, Any]]]
 
@@ -69,11 +69,15 @@ def test_leaderboard_uses_best_elo_reference(app: typer.Typer) -> None:
     elo_run = runlog.read_runs().filter(pl.col("model") == "elo")["run_id"][0]
     result = invoke(app, "leaderboard", "--seasons", "2019-2022")
     assert result.exit_code == 0, result.output
-    assert f"reference {elo_run}" in result.output
+    assert f"reference {short_id(elo_run)}" in result.output
     assert "home_rate" in result.output
     assert "reference" in result.output
-    explicit = invoke(app, "leaderboard", "--seasons", "2019-2022", "--reference", "missing")
-    assert explicit.exit_code != 0
+    for chosen in (elo_run, short_id(elo_run)):
+        explicit = invoke(app, "leaderboard", "--seasons", "2019-2022", "--reference", chosen)
+        assert explicit.exit_code == 0, explicit.output
+        assert f"reference {short_id(elo_run)}" in explicit.output
+    missing = invoke(app, "leaderboard", "--seasons", "2019-2022", "--reference", "missing")
+    assert missing.exit_code != 0
 
 
 def test_leaderboard_without_runs(app: typer.Typer) -> None:

@@ -154,10 +154,15 @@ def load_entries(kind: str, seasons: list[int], console: Console) -> list[Entry]
 
 def pick_reference(entries: list[Entry], reference: str | None) -> Entry:
     if reference is not None:
-        for entry in entries:
-            if entry.run["run_id"] == reference:
-                return entry
-        raise typer.BadParameter(f"run {reference} not found for these seasons and kind")
+        matches = [
+            entry
+            for entry in entries
+            if entry.run["run_id"] == reference or short_id(entry.run["run_id"]) == reference
+        ]
+        if len(matches) == 1:
+            return matches[0]
+        problem = "is ambiguous" if matches else "not found for these seasons and kind"
+        raise typer.BadParameter(f"run {reference} {problem}")
     pool = [entry for entry in entries if entry.run["model"] == REFERENCE_MODEL] or entries
     return min(
         pool,
@@ -188,23 +193,40 @@ def standings(entries: list[Entry], reference: Entry) -> tuple[list[Standing], l
     return sorted(rows, key=lambda row: row.stats["log_loss"]), skipped
 
 
+def short_id(run_id: str) -> str:
+    return run_id.rsplit("-", 1)[-1]
+
+
 def _setup(run: dict[str, Any]) -> str:
-    params = "" if run["params"] == "{}" else f" {run['params']}"
-    return f"{run['track']} {run['retrain']}{params}"
+    params = {key: value for key, value in json.loads(run["params"]).items() if key != "track"}
+    parts = [run["track"]]
+    if run["retrain"] != "weekly":
+        parts.append(run["retrain"])
+    if params:
+        parts.append(json.dumps(params))
+    return " ".join(parts)
 
 
 def runs_table(rows: list[Standing], title: str) -> Table:
+    counts = {row.stats["n"] for row in rows}
+    show_games = len(counts) > 1
+    if not show_games:
+        title = f"{title}, {counts.pop()} games each"
     table = Table(title=title)
-    for header in ("#", "Run", "Model", "Setup", "Games", "Acc", "Log loss", "Brier", "ECE"):
-        table.add_column(header, no_wrap=header in ("#", "Run"))
+    headers = ["#", "Run", "Model", "Setup"]
+    headers += ["Games"] if show_games else []
+    headers += ["Acc", "Log loss", "Brier", "ECE"]
+    for header in headers:
+        table.add_column(header, no_wrap=header != "Setup")
     for index, row in enumerate(rows, start=1):
         run = row.entry.run
+        games = [str(row.stats["n"])] if show_games else []
         table.add_row(
             str(index),
-            run["run_id"],
+            short_id(run["run_id"]),
             run["model"],
             _setup(run),
-            str(row.stats["n"]),
+            *games,
             _pct(row.stats["accuracy"]),
             _num(row.stats["log_loss"]),
             _num(row.stats["brier"]),
@@ -220,22 +242,20 @@ def comparison_table(rows: list[Standing], title: str) -> Table:
         "#",
         "Model",
         "dLogLoss (95% CI)",
-        "dBrier (95% CI)",
         "Flips W/L",
         "Seasons",
         "Adopt",
     )
     for header in headers:
-        table.add_column(header, no_wrap=header != "Model")
+        table.add_column(header, no_wrap=True)
     for index, row in enumerate(rows, start=1):
         comparison = row.comparison
         if comparison is None:
-            cells = ["reference", "", "", "", ""]
+            cells = ["reference", "", "", ""]
         else:
             test = comparison.mcnemar
             cells = [
                 _interval(comparison.bootstrap.log_loss),
-                _interval(comparison.bootstrap.brier),
                 f"{test.candidate_only}/{test.reference_only}\np={test.p_value:.3f}",
                 f"{comparison.seasons.won}/{comparison.seasons.total}",
                 "yes" if comparison.adoptable else "no",
@@ -288,7 +308,7 @@ def register(app: typer.Typer) -> None:
             console.print(f"no {kind.value} runs with predictions for seasons {seasons}")
             raise typer.Exit(1)
         chosen = pick_reference(entries, reference)
-        title = f"{kind.value} leaderboard {seasons}, reference {chosen.run['run_id']}"
+        title = f"{kind.value} leaderboard {seasons}, reference {short_id(chosen.run['run_id'])}"
         rows, skipped = standings(entries, chosen)
         console.print(runs_table(rows, title))
         console.print(comparison_table(rows, "Candidate minus reference on common games"))
