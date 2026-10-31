@@ -6,6 +6,7 @@ import polars as pl
 import typer
 from rich.console import Console
 
+from football import storage
 from football.features.build import build_features, write_features
 from football.features.columns import (
     ELO_FEATURES,
@@ -56,13 +57,21 @@ def register(app: typer.Typer) -> None:
             str | None, typer.Option(help="Seasons to output, for example 1999-2026")
         ] = None,
         as_of: Annotated[
-            str | None, typer.Option(help="ISO timestamp with timezone; defaults to each kickoff")
+            str | None,
+            typer.Option(
+                help="ISO timestamp with timezone; writes the separate games_as_of table",
+            ),
         ] = None,
     ) -> None:
         console = Console()
         started = time.perf_counter()
-        df = build_features(_parse_as_of(as_of), parse_seasons(seasons) if seasons else None)
-        stored = write_features(df)
+        moment = _parse_as_of(as_of)
+        df = build_features(moment, parse_seasons(seasons) if seasons else None)
+        if moment is None:
+            stored = write_features(df)
+        else:
+            storage.write(df, "features", "games_as_of")
+            stored = df
         elapsed = time.perf_counter() - started
         console.print(f"features: {df.height} games built, {stored.height} stored, {elapsed:.1f}s")
         for group, rate in null_rates(df).items():
