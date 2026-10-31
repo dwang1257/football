@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     repo_dir: Path = Path(".")
     seed: int = 20261016
     http_timeout_s: float = 30.0
-    user_agent: str = "football-predictor/0.1 (personal research)"
+    user_agent: str = "football-predictor/0.1 (+https://github.com/dwang1257/football)"
     opinion_weight: float = 0.12
     opinion_team_weight: float = 0.5
     opinion_cap: float = 0.35

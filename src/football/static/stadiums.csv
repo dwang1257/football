@@ -1,0 +1,70 @@
+stadium_id,name,lat,lon,elevation_m,tz,roof_type,surface,weather_station,is_international,coord_source
+ATL00,Georgia Dome,33.7575,-84.40083,330.0,America/New_York,dome,fieldturf,KFTY,false,wikidata:Q1058931
+ATL97,Mercedes-Benz Stadium,33.75528,-84.40083,313.0,America/New_York,retractable,fieldturf,KFTY,false,wikidata:Q7007552
+BAL00,M&T Bank Stadium,39.27806,-76.62278,15.0,America/New_York,outdoors,grass,KBWI,false,wikidata:Q1141336
+BER00,Olympiastadion Berlin,52.5147,13.2395,66.0,Europe/Berlin,outdoors,grass,EDDB,true,manual
+BOS00,Gillette Stadium,42.09094,-71.26434,88.0,America/New_York,outdoors,fieldturf,KOWD,false,wikidata:Q373355
+BOS99,Foxboro Stadium,42.0927,-71.26744,98.0,America/New_York,outdoors,grass,KSFZ,false,wikidata:Q339850
+BRG00,Tiger Stadium (LSU),30.41194,-91.18556,11.0,America/Chicago,outdoors,grass,KBTR,false,wikidata:Q1594708
+BUF00,Highmark Stadium,42.77297,-78.79219,229.0,America/New_York,outdoors,a_turf,KBUF,false,wikidata:Q16251517
+BUF01,Rogers Centre,43.64139,-79.38917,109.0,America/Toronto,retractable,a_turf,CYTZ,true,wikidata:Q76318
+CAR00,Bank of America Stadium,35.22583,-80.85278,227.0,America/New_York,outdoors,grass,KCLT,false,wikidata:Q806673
+CHI98,Soldier Field,41.8625,-87.61667,183.0,America/Chicago,outdoors,grass,KMDW,false,wikidata:Q1132413
+CHI99,Memorial Stadium (Champaign),40.0992,-88.236,229.0,America/Chicago,outdoors,astroplay,KCMI,false,manual
+CIN00,Paycor Stadium,39.09544,-84.51604,154.0,America/New_York,outdoors,fieldturf,KLUK,false,wikidata:Q1632294
+CIN99,Cinergy Field,39.09673,-84.50828,158.0,America/New_York,outdoors,astroturf,KLUK,false,wikidata:Q34857648
+CLE00,Huntington Bank Field,41.50611,-81.69944,185.0,America/New_York,outdoors,grass,KBKL,false,wikidata:Q1100756
+DAL00,AT&T Stadium,32.74769,-97.09288,180.0,America/Chicago,retractable,matrixturf,KGPM,false,wikidata:Q838284
+DAL99,Texas Stadium,32.83977,-96.91091,170.0,America/Chicago,outdoors,fieldturf,KDAL,false,wikidata:Q601596
+DEN00,Empower Field at Mile High,39.74389,-105.02,1595.0,America/Denver,outdoors,grass,KBJC,false,wikidata:Q1046135
+DEN99,Mile High Stadium,39.74611,-105.02167,1598.0,America/Denver,outdoors,grass,KBJC,false,wikidata:Q1934586
+DET00,Ford Field,42.34,-83.04556,181.0,America/Detroit,dome,fieldturf,KDET,false,wikidata:Q1142586
+DET99,Pontiac Silverdome,42.64583,-83.255,285.0,America/Detroit,dome,astroturf,KPTK,false,wikidata:Q211662
+DUB00,Croke Park,53.36083,-6.25111,12.0,Europe/Dublin,outdoors,grass,EIDW,true,wikidata:Q478225
+FRA00,Deutsche Bank Park,50.06861,8.64528,109.0,Europe/Berlin,retractable,grass,EDDF,true,wikidata:Q157273
+GER00,Allianz Arena,48.21878,11.62475,490.0,Europe/Berlin,outdoors,grass,EDDM,true,wikidata:Q127429
+GNB00,Lambeau Field,44.50139,-88.06222,199.0,America/Chicago,outdoors,grass,KGRB,false,wikidata:Q860790
+HOU00,NRG Stadium,29.6847,-95.4107,17.0,America/Chicago,retractable,astroturf,KHOU,false,manual
+IND00,Lucas Oil Stadium,39.76006,-86.16381,217.0,America/Indiana/Indianapolis,retractable,fieldturf,KIND,false,wikidata:Q867160
+IND99,RCA Dome,39.76366,-86.16332,223.0,America/Indiana/Indianapolis,dome,fieldturf,KEYE,false,wikidata:Q2092780
+JAX00,EverBank Stadium,30.3239,-81.6373,6.0,America/New_York,outdoors,grass,KNIP,false,manual
+KAN00,GEHA Field at Arrowhead Stadium,39.04889,-94.48389,273.0,America/Chicago,outdoors,grass,KMKC,false,wikidata:Q544553
+LAX01,SoFi Stadium,33.9504,-118.338,36.0,America/Los_Angeles,dome,matrixturf,KHHR,false,wikidata:Q19520501
+LAX97,Dignity Health Sports Park,33.86444,-118.26111,26.0,America/Los_Angeles,outdoors,grass,KHHR,false,wikidata:Q200684
+LAX99,Los Angeles Memorial Coliseum,34.01417,-118.28778,49.0,America/Los_Angeles,outdoors,grass,KCQT,false,wikidata:Q849784
+LON00,Wembley Stadium,51.55556,-0.27972,60.0,Europe/London,outdoors,grass,EGLL,true,wikidata:Q43279
+LON01,Twickenham Stadium,51.45611,-0.34167,29.0,Europe/London,outdoors,grass,EGLL,true,wikidata:Q209725
+LON02,Tottenham Hotspur Stadium,51.60444,-0.06639,16.0,Europe/London,outdoors,grass,EGLC,true,wikidata:Q55074091
+MAD01,Santiago Bernabeu,40.4531,-3.6883,719.0,Europe/Madrid,retractable,grass,LEMD,true,manual
+MEL00,Melbourne Cricket Ground,-37.81994,144.98345,13.0,Australia/Melbourne,outdoors,grass,YMML,true,wikidata:Q330136
+MEX00,Estadio Azteca,19.30306,-99.15056,2288.0,America/Mexico_City,outdoors,grass,MMMX,true,wikidata:Q320454
+MIA00,Hard Rock Stadium,25.95806,-80.23889,15.0,America/New_York,outdoors,grass,KFLL,false,wikidata:Q864339
+MIN00,Hubert H. Humphrey Metrodome,44.97389,-93.25806,259.0,America/Chicago,dome,sportturf,KMSP,false,wikidata:Q1072186
+MIN01,U.S. Bank Stadium,44.97389,-93.25806,259.0,America/Chicago,dome,sportturf,KMSP,false,wikidata:Q7929512
+MIN98,Huntington Bank Stadium,44.97639,-93.22444,254.0,America/Chicago,outdoors,fieldturf,KMSP,false,wikidata:Q3512039
+MUN01,Allianz Arena,48.21878,11.62475,490.0,Europe/Berlin,outdoors,grass,EDDM,true,wikidata:Q127429
+NAS00,Nissan Stadium,36.16639,-86.77139,134.0,America/Chicago,outdoors,grass,KBNA,false,wikidata:Q1142992
+NOR00,Caesars Superdome,29.95083,-90.08111,22.0,America/Chicago,dome,sportturf,KNEW,false,wikidata:Q756452
+NYC00,Giants Stadium,40.81373,-74.07443,6.0,America/New_York,outdoors,fieldturf,KTEB,false,wikidata:Q375365
+NYC01,MetLife Stadium,40.81361,-74.07444,6.0,America/New_York,outdoors,fieldturf,KTEB,false,wikidata:Q10862290
+OAK00,Oakland Coliseum,37.75167,-122.20056,2.0,America/Los_Angeles,outdoors,grass,KOAK,false,wikidata:Q1147732
+PAR00,Stade de France,48.92444,2.36,60.0,Europe/Paris,outdoors,grass,LFPB,true,wikidata:Q13205
+PHI00,Lincoln Financial Field,39.90083,-75.1675,15.0,America/New_York,outdoors,grass,KPHL,false,wikidata:Q116718467
+PHI99,Veterans Stadium,39.90667,-75.17111,10.0,America/New_York,outdoors,fieldturf,KPHL,false,wikidata:Q1545870
+PHO00,State Farm Stadium,33.5275,-112.2625,322.0,America/Phoenix,retractable,grass,KGEU,false,wikidata:Q756433
+PHO99,Sun Devil Stadium,33.4264,-111.9325,368.0,America/Phoenix,outdoors,grass,KPHX,false,manual
+PIT00,Acrisure Stadium,40.44667,-80.01583,219.0,America/New_York,outdoors,grass,KAGC,false,wikidata:Q1067148
+PIT99,Three Rivers Stadium,40.44667,-80.01278,230.0,America/New_York,outdoors,astroturf,KAGC,false,wikidata:Q1189339
+RIO00,Maracana Stadium,-22.91222,-43.23028,17.0,America/Sao_Paulo,outdoors,grass,SBRJ,true,wikidata:Q155174
+SAN00,Alamodome,29.41694,-98.47889,228.0,America/Chicago,dome,fieldturf,KSSF,false,wikidata:Q1618347
+SAO00,Arena Corinthians,-23.54556,-46.474,791.0,America/Sao_Paulo,outdoors,grass,SBGR,true,wikidata:Q1362236
+SDG00,Qualcomm Stadium,32.78306,-117.11944,27.0,America/Los_Angeles,outdoors,grass,KMYF,false,wikidata:Q956072
+SEA00,Lumen Field,47.59528,-122.33167,26.0,America/Los_Angeles,outdoors,fieldturf,KBFI,false,wikidata:Q612736
+SEA98,Kingdome,47.59556,-122.33306,13.0,America/Los_Angeles,dome,astroturf,KBFI,false,wikidata:Q990430
+SEA99,Husky Stadium,47.65028,-122.30167,24.0,America/Los_Angeles,outdoors,fieldturf,KBFI,false,wikidata:Q1136463
+SFO00,Candlestick Park,37.71361,-122.38611,10.0,America/Los_Angeles,outdoors,grass,KSFO,false,wikidata:Q1033076
+SFO01,Levi's Stadium,37.4034,-121.97,1.0,America/Los_Angeles,outdoors,grass,KSJC,false,wikidata:Q7419343
+STL00,Dome at America's Center,38.63278,-90.18861,174.0,America/Chicago,dome,astroplay,KCPS,false,wikidata:Q1292739
+TAM00,Raymond James Stadium,27.97583,-82.50333,19.0,America/New_York,outdoors,grass,KTPA,false,wikidata:Q1141343
+VEG00,Allegiant Stadium,36.09078,-115.183,666.0,America/Los_Angeles,dome,grass,KLAS,false,wikidata:Q27768421
+WAS00,Northwest Stadium,38.90778,-76.86444,71.0,America/New_York,outdoors,grass,KADW,false,wikidata:Q583085

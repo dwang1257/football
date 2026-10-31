@@ -1,0 +1,9 @@
+game_id,stadium_id,note
+2025_01_KC_LAC,SAO00,Sao Paulo game; nflverse lists the home team stadium
+2025_04_MIN_PIT,DUB00,Dublin game at Croke Park; nflverse lists the home team stadium
+2025_05_MIN_CLE,LON02,London game at Tottenham; nflverse lists the home team stadium
+2025_06_DEN_NYJ,LON02,London game at Tottenham; nflverse lists the home team stadium
+2025_07_LA_JAX,LON00,London game at Wembley; nflverse lists the home team stadium
+2025_10_ATL_IND,BER00,Berlin game at Olympiastadion; nflverse lists the home team stadium
+2025_11_WAS_MIA,MAD01,Madrid game at Bernabeu; nflverse lists the home team stadium
+2026_05_PHI_JAX,LON02,nflverse names Tottenham Hotspur Stadium but keeps stadium_id JAX00
