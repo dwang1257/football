@@ -1,0 +1,80 @@
+name: collect
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 13 * * *"
+    - cron: "17 22 * * 4"
+    - cron: "17 15 * * 0"
+    - cron: "47 22 * * 0"
+    - cron: "17 22 * * 1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-archive
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      FOOTBALL_DATA_DIR: ${{ github.workspace }}/data
+      ARCHIVE_BRANCH: data-archive
+      ARCHIVE_DIR: ${{ github.workspace }}/../data-archive
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Collect snapshots
+        id: collect
+        run: uv run football collect
+
+      - name: Persist archive to the data-archive branch
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          if [ ! -d data/archive ] || [ -z "$(find data/archive -type f -name '*.json.gz' -print -quit)" ]; then
+            echo "no snapshots to persist"
+            exit 0
+          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$ARCHIVE_BRANCH" > /dev/null; then
+            git fetch --depth=1 origin "$ARCHIVE_BRANCH"
+            git worktree add --detach "$ARCHIVE_DIR" FETCH_HEAD
+          else
+            git worktree add --detach "$ARCHIVE_DIR"
+            git -C "$ARCHIVE_DIR" checkout --orphan "$ARCHIVE_BRANCH"
+            git -C "$ARCHIVE_DIR" rm -rf --quiet --ignore-unmatch .
+            git -C "$ARCHIVE_DIR" clean -fdxq
+          fi
+          (
+            cd data/archive
+            find . -type f -name '*.json.gz' -print0 | while IFS= read -r -d '' file; do
+              if [ ! -e "$ARCHIVE_DIR/$file" ]; then
+                mkdir -p "$ARCHIVE_DIR/$(dirname "$file")"
+                cp "$file" "$ARCHIVE_DIR/$file"
+              fi
+            done
+          )
+          git -C "$ARCHIVE_DIR" add -A
+          if git -C "$ARCHIVE_DIR" diff --cached --quiet; then
+            echo "archive unchanged"
+            exit 0
+          fi
+          added=$(git -C "$ARCHIVE_DIR" diff --cached --name-only | wc -l)
+          git -C "$ARCHIVE_DIR" commit --quiet -m "chore: archive ${added} snapshots from run ${GITHUB_RUN_ID}"
+          git -C "$ARCHIVE_DIR" push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
