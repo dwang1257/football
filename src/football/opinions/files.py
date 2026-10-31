@@ -49,6 +49,7 @@ class OpinionSet:
     entered_at: datetime
     games: dict[str, GameEntry] = field(default_factory=dict[str, GameEntry])
     nudges: dict[str, float] = field(default_factory=dict[str, float])
+    team_points: dict[str, float] = field(default_factory=dict[str, float])
     team_whys: dict[str, str] = field(default_factory=dict[str, str])
     late: tuple[str, ...] = ()
 
@@ -220,6 +221,7 @@ def load_opinions(
         entered_at=entered_at,
         games=counted,
         nudges=nudges,
+        team_points=points,
         team_whys=whys,
         late=tuple(late),
     )

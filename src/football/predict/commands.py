@@ -7,7 +7,7 @@ from rich.console import Console
 from football.backtest.commands import ParamOpt, TrackOption, parse_params
 from football.models import registry
 from football.opinions.files import OpinionError
-from football.predict.display import weekly_table
+from football.predict.display import weekly_table, why_lines
 from football.predict.run import (
     DEFAULT_LOCK_HOURS,
     PredictOutcome,
@@ -27,6 +27,8 @@ def _report(console: Console, outcome: PredictOutcome, title: str) -> None:
         for warning in outcome.opinions.warnings():
             console.print(f"[yellow]warning:[/yellow] {warning}")
     console.print(weekly_table(outcome, title))
+    for line in why_lines(outcome):
+        console.print(f"  [dim italic]{line}[/dim italic]")
     console.print(f"run {outcome.run_id}")
     if outcome.locked:
         console.print(f"[cyan]locked final:[/cyan] {', '.join(outcome.locked)}")
